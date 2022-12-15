@@ -8,15 +8,28 @@ import {
     MDBValidation,
   } from "mdb-react-ui-kit";
   import React from "react";
-  import { Link } from "react-router-dom";
+  import { useDispatch, useSelector } from "react-redux";
+  import { Link, useNavigate } from "react-router-dom";
+  import { toast } from "react-toastify";
+  import { login } from "../redux/feature/authSlice";
+
   
   function Login() {
     const [formValues, setFormValues] = React.useState({
       email: "",
       password: "",
     });
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { email, password } = formValues;
-    const handleSubmit = () => {};
+    const handleSubmit = () => {
+      if (email && password) {
+        dispatch(
+          login({ formValues, navigate, toast })
+          // same as { formValues: formValues, navigate: navigate, toast: toast }
+        );
+      }
+    };
     const onInputChange = (e) => {
       setFormValues({
         ...formValues,
