@@ -5,13 +5,16 @@ import {
     MDBCardFooter,
     MDBIcon,
     MDBInput,
+    MDBSpinner,
     MDBValidation,
   } from "mdb-react-ui-kit";
-  import React from "react";
+  import React, { useEffect } from "react";
+  // import { GoogleLogin } from "react-google-login";
+  import { GoogleLogin } from "@react-oauth/google";
   import { useDispatch, useSelector } from "react-redux";
   import { Link, useNavigate } from "react-router-dom";
   import { toast } from "react-toastify";
-  import { login } from "../redux/feature/authSlice";
+  import { googleLogIn, login } from "../redux/feature/authSlice";
 
   
   function Login() {
@@ -19,9 +22,18 @@ import {
       email: "",
       password: "",
     });
+
+    const {loading,error} = useSelector((state)=> ({...state.auth }))
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const { email, password } = formValues;
+
+    useEffect(() =>{
+       error && toast.error(error);
+    },[error])
+
     const handleSubmit = () => {
       if (email && password) {
         dispatch(
@@ -30,11 +42,32 @@ import {
         );
       }
     };
+  
     const onInputChange = (e) => {
       setFormValues({
         ...formValues,
         [e.target.name]: e.target.value,
       });
+    };
+
+    const googleFailure = (err) => {
+      console.log(err);
+      toast.error(err);
+    };
+    const googleSucess = (res) => {
+      console.log("====================================");
+      console.log(res);
+      console.log("====================================");
+      const result = {
+        email: res?.profileObj?.email,
+        name: res?.profileObj?.name,
+        token: res?.tokenId,
+        googleId: res?.googleId,
+      };
+      dispatch(
+        googleLogIn({ result: res, navigate, toast })
+        // same as { formValues: formValues, navigate: navigate, toast: toast }
+      );
     };
     return (
       <div
@@ -75,11 +108,28 @@ import {
                 />
               </div>
               <div className="col-md-12">
-                <MDBBtn style={{ width: "100%" }} className="mt-2">
-                  LOGIN
-                </MDBBtn>
+              <MDBBtn style={{ width: "100%" }} className="mt-2">
+                {loading ? (
+                  <MDBSpinner
+                    size="sm"
+                    role="status"
+                    tag="span"
+                    className="m-1"
+                  ></MDBSpinner>) : (
+                     "Login"
+                  )}
+              </MDBBtn>
               </div>
             </MDBValidation>
+            <br />
+
+            <GoogleLogin 
+              width="320"
+              onSuccess={googleSucess}
+              text="signin"
+              onError={googleFailure}
+              // cookiePolicy="single_host_origin"
+            />
           </MDBCardBody>
           <MDBCardFooter>
             <Link to="/register">
