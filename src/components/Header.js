@@ -32,7 +32,7 @@ function Header() {
         <MDBNavbarBrand
           href="/"
           style={{
-            color: "#959a9c",
+            color: "#606080",
             fontWeight: 600,
             fontSize: 22,
           }}>
@@ -43,7 +43,7 @@ function Header() {
           aria-expanded="false"
           aria-label="Toggle nav"
           onClick={() => setShow(!show)}
-          style={{ color: "#0579b3" }}>
+          style={{ color: "#606080" }}>
           <MDBIcon icon="bars" fas />
         </MDBNavbarToggler>
         <MDBCollapse navbar show={show}>
